@@ -1,0 +1,102 @@
+{
+  "slug": "privacy",
+  "title": "个人信息保存期限与同意状态预检",
+  "fields": [
+    {
+      "key": "record_no",
+      "label": "处理记录",
+      "type": "ID",
+      "length": 200
+    },
+    {
+      "key": "purpose",
+      "label": "处理目的",
+      "type": "TEXT",
+      "length": 200
+    },
+    {
+      "key": "basis",
+      "label": "依据",
+      "type": "ENUM",
+      "length": 200,
+      "options": [
+        "CONSENT",
+        "CONTRACT",
+        "LEGAL"
+      ]
+    },
+    {
+      "key": "consent",
+      "label": "同意状态",
+      "type": "ENUM",
+      "length": 200,
+      "options": [
+        "GRANTED",
+        "WITHDRAWN",
+        "NOT_REQUIRED"
+      ]
+    },
+    {
+      "key": "collected",
+      "label": "采集日期",
+      "type": "DATE",
+      "length": 200
+    },
+    {
+      "key": "retention_end",
+      "label": "保存截止",
+      "type": "DATE",
+      "length": 200
+    }
+  ],
+  "unique": [
+    [
+      "record_no"
+    ]
+  ],
+  "rules": [
+    {
+      "op": "IF_EQ",
+      "args": [
+        "basis",
+        "CONSENT",
+        "consent",
+        "GRANTED"
+      ],
+      "code": "CONSENT_REQUIRED",
+      "message": "本模板以同意为依据的在用记录需GRANTED（不是法律合规结论）",
+      "bad": {
+        "consent": "WITHDRAWN"
+      }
+    },
+    {
+      "op": "DATE_LE",
+      "args": [
+        "collected",
+        "retention_end"
+      ],
+      "code": "RETENTION_DATE",
+      "message": "保存截止不得早于采集日期",
+      "bad": {
+        "retention_end": "2025-12-31"
+      }
+    },
+    {
+      "op": "EXPIRY",
+      "args": [
+        "retention_end"
+      ],
+      "code": "EXPIRY",
+      "message": "保存期限提醒",
+      "bad": null
+    }
+  ],
+  "sampleCsv": "record_no,purpose,basis,consent,collected,retention_end\nPRV-001,示例业务联系,CONSENT,GRANTED,2026-01-01,2027-01-01\n",
+  "limits": {
+    "rows": 500,
+    "bytes": 262144,
+    "columns": 32,
+    "cellCharacters": 4000
+  },
+  "scope": "Read-only batch validation; no persistence, reference-master lookup or full production certification."
+}

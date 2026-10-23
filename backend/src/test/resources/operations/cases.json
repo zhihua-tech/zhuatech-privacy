@@ -1,0 +1,51 @@
+[
+  {
+    "patch": {},
+    "expected": {
+      "decision": "PASS",
+      "retentionDeadline": "2026-10-31",
+      "daysLeft": "#8"
+    },
+    "error": false
+  },
+  {
+    "patch": {
+      "retentionDays": "10"
+    },
+    "expected": {
+      "decision": "REVIEW",
+      "candidateAction": "候选清理复审"
+    },
+    "error": false
+  },
+  {
+    "patch": {
+      "legalHold": "YES",
+      "retentionDays": "10"
+    },
+    "expected": {
+      "decision": "HOLD",
+      "candidateAction": "冻结保留"
+    },
+    "error": false
+  },
+  {
+    "patch": {
+      "purposeStillValid": "NO"
+    },
+    "expected": {
+      "decision": "REVIEW"
+    },
+    "error": false
+  },
+  {
+    "patch": {
+      "retentionDays": "22"
+    },
+    "expected": {
+      "decision": "PASS",
+      "daysLeft": "#0"
+    },
+    "error": false
+  }
+]
